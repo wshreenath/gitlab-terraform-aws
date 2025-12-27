@@ -1,1 +1,35 @@
+image: hashicorp/terraform:1.6
+
+stages:
+  - validate
+  - plan
+  - apply
+
+variables:
+  TF_ROOT: terraform/envs/dev
+
+before_script:
+  - cd $TF_ROOT
+  - terraform --version
+
+validate:
+  stage: validate
+  script:
+    - terraform init -backend=false
+    - terraform validate
+
+plan:
+  stage: plan
+  script:
+    - terraform init
+    - terraform plan
+  artifacts:
+    paths:
+      - terraform.plan
+
+apply:
+  stage: apply
+  when: manual
+  script:
+    - terraform apply -auto-approve
 
